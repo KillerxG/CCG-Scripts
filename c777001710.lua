@@ -20,6 +20,7 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1,id)
+	e2:SetCost(s.thcost)
 	e2:SetTarget(s.settg)
 	e2:SetOperation(s.setop)
 	c:RegisterEffect(e2)	
@@ -52,6 +53,10 @@ end
 --(2)Set 1 "Thunder Force" S/T
 function s.setfilter(c)
 	return c:IsSetCard(0x301) and c:IsType(TYPE_SPELL+TYPE_TRAP) and c:IsSSetable()
+end
+function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
+	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
 end
 function s.settg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.setfilter,tp,LOCATION_DECK,0,1,nil) end

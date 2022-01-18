@@ -31,6 +31,7 @@ function s.attafilter(c)
 	return c:IsSetCard(0x291) and c:IsType(TYPE_MONSTER)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)	
+	local c=e:GetHandler()
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_EXTRA,0,1,1,nil,e,tp)
@@ -42,6 +43,26 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		if #pg>0 then
 			Duel.BreakEffect()
 			Duel.Overlay(sc,pg)
+			--(1.1)Lock Summon
+			local e1=Effect.CreateEffect(c)
+			e1:SetType(EFFECT_TYPE_FIELD)
+			e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+			e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+			e1:SetTargetRange(1,0)
+			e1:SetTarget(s.splimit)
+			e1:SetReset(RESET_PHASE+PHASE_END)
+			Duel.RegisterEffect(e1,tp)
+			aux.RegisterClientHint(e:GetHandler(),nil,tp,1,0,aux.Stringid(id,2),nil)
+			--(1.2)Lizard check
+			aux.addTempLizardCheck(e:GetHandler(),tp,s.lizfilter)
 		end
 	end
+end
+--(1.1)Lock Summon
+function s.splimit(e,c)
+	return not ((c:IsOriginalSetCard(0x291) and c:IsType(TYPE_MONSTER)) or c:IsOriginalType(TYPE_XYZ)) and c:IsLocation(LOCATION_EXTRA)
+end
+--(1.2)Lizard check
+function s.lizfilter(e,c)
+	return not ((c:IsOriginalSetCard(0x291) and c:IsType(TYPE_MONSTER)) or c:IsOriginalType(TYPE_XYZ))
 end
