@@ -62,7 +62,7 @@ function s.splimit(e,se,sp,st)
 end
 --(1)ATK Up
 function s.atkfilter(c)
-	return c:IsFaceup() and c:IsRace(0x292)
+	return c:IsType(TYPE_MONSTER) and c:IsSetCard(0x292)
 end
 function s.atkval(e,c)
 	return Duel.GetMatchingGroupCount(s.atkfilter,c:GetControler(),LOCATION_GRAVE,0,nil)*300
