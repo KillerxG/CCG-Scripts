@@ -31,7 +31,7 @@ function s.ovfilter(c,tp,lc)
 end
 --(2)Destroy card
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	return r&(REASON_BATTLE+REASON_EFFECT)~=0
+	return r&(REASON_BATTLE+REASON_EFFECT)~=0 and ep~=tp
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
