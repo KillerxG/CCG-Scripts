@@ -1,4 +1,4 @@
---Thunder Force Magician
+--Thunder Force Magician - Rick
 --Scripted by KillerxG
 local s,id=GetID()
 function s.initial_effect(c)
@@ -17,7 +17,7 @@ function s.initial_effect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e2:SetType(EFFECT_TYPE_XMATERIAL+EFFECT_TYPE_IGNITION)
-	e2:SetCountLimit(1)
+	e2:SetCountLimit(1,id+1)
 	e2:SetCondition(s.mtcon)
 	e2:SetTarget(s.target)
 	e2:SetOperation(s.activate)

@@ -14,6 +14,7 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_FZONE)
 	e1:SetCountLimit(1,id)
+	e1:SetCondition(s.spcon)
 	e1:SetTarget(s.sptg)
 	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
@@ -52,6 +53,10 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
 end
 --(1)Special Summon, then attach
+function s.spcon(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetFieldGroup(tp,LOCATION_MZONE,0)
+	return #g>0 and g:FilterCount(aux.FilterFaceupFunction(Card.IsSetCard,0x301),nil)==#g
+end
 function s.spfilter(c,e,tp)
 	return c:IsSetCard(0x301) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
@@ -64,6 +69,7 @@ function s.attafilter(c)
 	return c:IsSetCard(0x301) and not c:IsRitualMonster()
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)	
+	local c=e:GetHandler()
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_EXTRA,0,1,1,nil,e,tp)
@@ -71,12 +77,32 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if #g>0 and Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)>0
 		and Duel.IsExistingMatchingCard(s.attafilter,tp,LOCATION_DECK,0,1,nil)
 		and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
-		local pg=Duel.SelectMatchingCard(tp,s.attafilter,tp,LOCATION_DECK,0,1,3,nil)
+		local pg=Duel.SelectMatchingCard(tp,s.attafilter,tp,LOCATION_DECK,0,1,1,nil)
 		if #pg>0 then
 			Duel.BreakEffect()
 			Duel.Overlay(sc,pg)
+			--(1.1)Lock Summon
+			local e1=Effect.CreateEffect(c)
+			e1:SetType(EFFECT_TYPE_FIELD)
+			e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+			e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+			e1:SetTargetRange(1,0)
+			e1:SetTarget(s.splimit)
+			e1:SetReset(RESET_PHASE+PHASE_END)
+			Duel.RegisterEffect(e1,tp)
+			aux.RegisterClientHint(e:GetHandler(),nil,tp,1,0,aux.Stringid(id,5),nil)
+			--(1.2)Lizard check
+			aux.addTempLizardCheck(e:GetHandler(),tp,s.lizfilter)
 		end
 	end
+end
+--(1.1)Lock Summon
+function s.splimit(e,c)
+	return not c:IsRace(RACE_THUNDER) and c:IsLocation(LOCATION_EXTRA)
+end
+--(1.2)Lizard check
+function s.lizfilter(e,c)
+	return not c:IsOriginalRace(RACE_THUNDER)
 end
 --(2)Apply the effects of a Thunder Force face-down
 function s.fcfilter(c)

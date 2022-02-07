@@ -106,8 +106,12 @@ end
 function s.spfilter(c,tp)
 	return c:IsFaceup() and c:IsControler(tp) and c:IsSetCard(0x291)
 end
+function s.spconfilter(c)
+  return c:IsFaceup() and c:IsSetCard(0x291) and c:IsType(TYPE_MONSTER)
+end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsExists(s.spfilter,1,nil,tp)
+	local g=Duel.GetFieldGroup(tp,LOCATION_MZONE,0)
+	return eg:IsExists(s.spfilter,1,nil,tp) and #g>0 and g:FilterCount(s.spconfilter,nil)==#g and not e:GetHandler():IsReason(REASON_RULE)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -128,4 +132,24 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		c:RegisterEffect(e1)
 	end
 	Duel.SpecialSummonComplete()
+	--(1.1)Lock Summon
+			local e1=Effect.CreateEffect(c)
+			e1:SetType(EFFECT_TYPE_FIELD)
+			e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+			e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+			e1:SetTargetRange(1,0)
+			e1:SetTarget(s.splimit)
+			e1:SetReset(RESET_PHASE+PHASE_END)
+			Duel.RegisterEffect(e1,tp)
+			aux.RegisterClientHint(e:GetHandler(),nil,tp,1,0,aux.Stringid(id,4),nil)
+			--(1.2)Lizard check
+			aux.addTempLizardCheck(e:GetHandler(),tp,s.lizfilter)
+end
+--(1.1)Lock Summon
+function s.splimit(e,c)
+	return not ((c:IsOriginalSetCard(0x291) and c:IsType(TYPE_MONSTER)) or c:IsOriginalType(TYPE_XYZ)) and c:IsLocation(LOCATION_EXTRA)
+end
+--(1.2)Lizard check
+function s.lizfilter(e,c)
+	return not ((c:IsOriginalSetCard(0x291) and c:IsType(TYPE_MONSTER)) or c:IsOriginalType(TYPE_XYZ))
 end

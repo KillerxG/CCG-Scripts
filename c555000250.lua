@@ -11,7 +11,7 @@ function s.initial_effect(c)
 	e1:SetCost(s.cost)
 	e1:SetTarget(s.nstg)
 	e1:SetOperation(s.nsop)
-	c:RegisterEffect(e1)
+	c:RegisterEffect(e1,false,REGISTER_FLAG_INTELESTAR)
 	--If banished from GY
 	local e2=Effect.CreateEffect(c)
 	e2:SetProperty(EFFECT_FLAG_DELAY)

@@ -89,7 +89,7 @@ function s.sactivate(e,tp,eg,ep,ev,re,r,rp)
 		local tc=Duel.GetFirstTarget()
 		if tc:IsRelateToEffect(e) and Duel.SendtoDeck(tc,nil,2,REASON_EFFECT) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 then
 			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-			local lsg=Duel.SelectMatchingCard(tp,aux.NecroValleyFilter(s.sfilter),tp,LOCATION_GRAVE+LOCATION_DECK,0,1,1,cg,tp)
+			local lsg=Duel.SelectMatchingCard(tp,aux.NecroValleyFilter(s.sfilter),tp,LOCATION_DECK,0,1,1,cg,tp)
 			if lsg:GetCount()>0 then
 				Duel.SpecialSummon(lsg,0,tp,tp,false,true,POS_FACEUP)				
 			end
