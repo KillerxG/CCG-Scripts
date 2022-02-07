@@ -5,6 +5,7 @@ function s.initial_effect(c)
 	--Xyz Material
 	Xyz.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x301),5,2,s.ovfilter,aux.Stringid(id,0))
 	c:EnableReviveLimit()
+	c:SetSPSummonOnce(id)
 	--(1)Special Summon
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
