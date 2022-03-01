@@ -29,6 +29,7 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_SUMMON_SUCCESS)
 	e2:SetRange(LOCATION_MZONE)
+	e2:SetCondition(s.attcon)
 	e2:SetTarget(s.atttg)
 	e2:SetOperation(s.attop)
 	c:RegisterEffect(e2)
@@ -48,6 +49,12 @@ function s.imcon(e)
 	return e:GetHandler():GetLinkedGroup():IsExists(s.imfilter,1,nil)
 end
 --Change Attribute
+function s.attfilter(c,tp)
+	return c:IsFaceup() and c:IsSetCard(0x291)
+end
+function s.attcon(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(s.attfilter,1,nil,tp)
+end
 function s.cfilter(c,tp)
 	return c:IsFaceup() 
 end
